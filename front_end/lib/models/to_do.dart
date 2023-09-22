@@ -1,5 +1,6 @@
 List<ToDo> globalTodos = [
-  ToDo(title: "thingy", isDone: false, description: "a thing to do")
+  ToDo(title: "thingy", isDone: false, description: "a thing to do"),
+  ToDo(title: "another", isDone: false, description: "a second thing todo")
 ];
 
 class ToDo {
@@ -50,5 +51,13 @@ class ToDo {
         globalTodos[i] = value;
       }
     }
+  }
+
+  void setDone() {
+    isDone = true;
+  }
+
+  void setNotDone() {
+    isDone = false;
   }
 }

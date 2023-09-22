@@ -14,35 +14,65 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page'),
-      ),
-      body: Center(
-        child: ListView.separated(
-          itemCount: todos.length,
-          separatorBuilder: (context, index) => SizedBox(width: 25),
-          itemBuilder: (context, index) {
-            return ListTile(
-              // onTap: () => {
-              //   print("tapped"),
-              //   setState(() {
-              //     _isChecked = !_isChecked;
-              //   })
-              // },
-              title: Text(todos[index].title),
-              subtitle: Text(todos[index].description),
-              trailing: Checkbox(
-                value: todos[index].isDone,
-                onChanged: (bool? value) {
-                  print("hello");
+        appBar: AppBar(
+          title: const Text('Home Page'),
+        ),
+        body: ListView(
+          children: [
+            Text("welcome to home page"),
+            Column(children: [
+              toDoList(),
+            ])
+          ],
+        ));
+  }
+
+  Center toDoList() {
+    return Center(
+      child: ListView.separated(
+        shrinkWrap: true,
+        itemCount: todos.length,
+        separatorBuilder: (context, index) => SizedBox(width: 25),
+        itemBuilder: (context, index) {
+          return ListTile(
+            isThreeLine: false,
+            // onTap: () => {
+            //   print("tapped"),
+            //   setState(() {
+            //     _isChecked = !_isChecked;
+            //   })
+            // },
+
+            leading: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: IconButton(
+                onPressed: () {
                   setState(() {
-                    todos[index].isDone = value!;
+                    ToDo.deleteTodo(
+                      todos[index],
+                    );
                   });
                 },
+                icon: const Icon(
+                  Icons.delete_outline_outlined,
+                  size: 33,
+                ),
               ),
-            );
-          },
-        ),
+            ),
+            title: Text(todos[index].title),
+            subtitle: Text(todos[index].description),
+            trailing: Checkbox(
+              value: todos[index].isDone,
+              onChanged: (bool? value) {
+                setState(() {
+                  value == true
+                      ? todos[index].setDone()
+                      : todos[index].setNotDone();
+                });
+              },
+            ),
+          );
+        },
       ),
     );
   }
