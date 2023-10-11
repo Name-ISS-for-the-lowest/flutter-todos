@@ -1,7 +1,15 @@
+// import 'package:mongo_dart/mongo_dart.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:math';
+
 List<ToDo> globalTodos = [
   ToDo(title: "thingy", isDone: false, description: "a thing to do"),
   ToDo(title: "another", isDone: false, description: "a second thing todo")
 ];
+
+// var db = Db("mongodb://localhost:27017");
+// var todoCollection = db.collection("todos");
 
 class ToDo {
   String title;
@@ -13,12 +21,41 @@ class ToDo {
     required this.title,
     required this.isDone,
     required this.description,
-  }) : id = createRandomID(10);
+  }) : id = createRandomID(20);
+
+  Map<String, dynamic> toJson() {
+    return {
+      "title": title,
+      "isDone": isDone,
+      "description": description,
+      "id": id,
+    };
+  }
+
+  void postTodo() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5000/todos'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(toJson()),
+      );
+      if (response.statusCode == 200) {
+        print("success");
+      } else {
+        print("failed");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   static String createRandomID(int size) {
+    var rand = Random();
     String randomID = "";
     for (int i = 0; i < size; i++) {
-      randomID += (i + 1).toString();
+      randomID += (rand.nextInt(10)).toString();
     }
     return randomID;
   }
@@ -51,13 +88,16 @@ class ToDo {
         globalTodos[i] = value;
       }
     }
+    //we simply send the request to the server
   }
 
   void setDone() {
     isDone = true;
+    updateTodo(this);
   }
 
   void setNotDone() {
     isDone = false;
+    updateTodo(this);
   }
 }
